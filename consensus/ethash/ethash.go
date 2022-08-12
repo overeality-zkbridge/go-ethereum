@@ -380,6 +380,16 @@ func (d *dataset) generated() bool {
 	return atomic.LoadUint32(&d.done) == 1
 }
 
+func (d *dataset) Dataset() []uint32 {
+	for {
+		if d.generated() {
+			return d.dataset
+		}
+		time.Sleep(time.Second)
+	}
+	return nil
+}
+
 // finalizer closes any file handlers and memory maps open.
 func (d *dataset) finalizer() {
 	if d.mmap != nil {
@@ -396,10 +406,9 @@ func MakeCache(block uint64, dir string) {
 }
 
 // MakeDataset generates a new ethash dataset and optionally stores it to disk.
-func MakeDataset(block uint64, dir string) []uint32 {
+func MakeDataset(block uint64, dir string) {
 	d := dataset{epoch: block / epochLength}
 	d.generate(dir, math.MaxInt32, false, false)
-	return d.dataset
 }
 
 // Mode defines the type and amount of PoW verification an ethash engine makes.
