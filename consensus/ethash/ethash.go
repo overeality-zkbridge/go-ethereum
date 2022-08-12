@@ -406,9 +406,10 @@ func MakeCache(block uint64, dir string) {
 }
 
 // MakeDataset generates a new ethash dataset and optionally stores it to disk.
-func MakeDataset(block uint64, dir string) {
+func MakeDataset(block uint64, dir string) []uint32 {
 	d := dataset{epoch: block / epochLength}
 	d.generate(dir, math.MaxInt32, false, false)
+	return d.Dataset()
 }
 
 // Mode defines the type and amount of PoW verification an ethash engine makes.
